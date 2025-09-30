@@ -4,19 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    void* data;
-    struct Node* next;
-} Node;
-
-typedef struct Queue {
-    Node* first;
-    Node* last;
-} Queue;
+typedef struct Node Node;
+typedef struct Queue Queue;
 
 Queue* createQueue();
+void* dequeue(Queue* q);
 void enqueue(Queue* q, void* data);
-void dequeue(Queue* q);
 void destroyQueue(Queue* q);
 
 

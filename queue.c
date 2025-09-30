@@ -33,19 +33,23 @@ void enqueue(Queue* q, void* data) {
     }
 };
 
-void dequeue(Queue* q) {
+void* dequeue(Queue* q) {
+    void* currentFrontValue = NULL;
     if (q->first == NULL) {
-        return;
+        return currentFrontValue;
     } else if (q->first->next != NULL) {
         Node* currentFront = q->first;
+        currentFrontValue = currentFront->data;
         q->first = q->first->next;
         free(currentFront);
+        return currentFrontValue;
     } else {
+        currentFrontValue = q->first->data;
         free(q->first);
         q->first = NULL;
         q->last = NULL;
+        return currentFrontValue;
     }
-    
 };
 
 void destroyQueue(Queue* q) {

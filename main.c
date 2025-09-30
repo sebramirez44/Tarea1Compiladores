@@ -4,6 +4,7 @@
 #include "queue.h"
 
 
+
 int main() {
     Queue* q = createQueue();
     int* num1 = malloc(sizeof(int));
@@ -12,7 +13,8 @@ int main() {
     *num2 = 20;
     enqueue(q, num1);
     enqueue(q, num2);
-    dequeue(q);
-    printf("%d", *(int*)q->first->data);
+    int* res= (int*)dequeue(q);
+    printf("%d", *res);
+
     return 0;
 };
