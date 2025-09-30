@@ -7,12 +7,14 @@ typedef struct Node {
 } Node;
 
 typedef struct Queue {
-    Node* front;
+    Node* first;
+    Node* last;
 } Queue;
 
 Queue* createQueue() {
     Queue* q = (Queue*)malloc(sizeof(Queue));
-    q->front = NULL;
+    q->first = NULL;
+    q->last = NULL;
 
     return q;
 }
@@ -22,29 +24,38 @@ void enqueue(Queue* q, int data) {
     newNode->data = data;
     newNode->next = NULL;
 
-    if (q->front == NULL) {
-        q->front = newNode;
+    if (q->first == NULL) {
+        q->first = newNode;
+        q->last = newNode;
     } else {
-        newNode->next = q->front;
-        q->front = newNode;
+        // how current queue looks: q-> first != NULL
+        q->last->next = newNode;
+        q->last = newNode;
     }
 };
 
 void dequeue(Queue* q) {
-    if (q->front == NULL) {
+    if (q->first == NULL) {
         return;
-    } else {
-        Node* currentFront = q->front;
-        q->front = q->front->next;
+    } else if (q->first->next != NULL) {
+        Node* currentFront = q->first;
+        q->first = q->first->next;
         free(currentFront);
+    } else {
+        free(q->first);
     }
+    
 };
+
+typedef struct Stack {
+    Node* front;
+} Stack;
 
 int main() {
     Queue* q = createQueue();
     enqueue(q, 10);
     enqueue(q, 20);
     dequeue(q);
-    printf("%d", q->front->data);
+    printf("%d", q->first->data);
     return 0;
 };
