@@ -78,3 +78,117 @@ static void resize(HashTable* ht) {
     }
     free(oldBuckets);
 }
+
+// funcion para crear la hash table
+HashTable* createHashTable() {
+    HashTable* ht = (HashTable*)malloc(sizeof(HashTable));
+    if (!ht) return NULL; // no se pudo alocar la tabla hash
+    
+    ht->capacity = INITIAL_CAPACITY;
+    ht->size = 0;
+    ht->buckets = (HTEntry**)calloc(INITIAL_CAPACITY, sizeof(HTEntry*));
+    
+    // no se pudieron alocar las buckets
+    if (!ht->buckets) {
+        free(ht);
+        return NULL;
+    }
+    
+    return ht;
+}
+
+void htInsert(HashTable* ht, const char* key, void* value) {
+    if (!ht || !key) return;
+    
+    if ((double)ht->size / ht->capacity >= LOAD_FACTOR_THRESHOLD) {
+        resize(ht);
+    }
+    
+    size_t index = hash(key) % ht->capacity;
+    HTEntry* entry = ht->buckets[index];
+    
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            entry->value = value; // cambiamos valor existente
+            return;
+        }
+        entry = entry->next;
+    }
+    
+    // creamos nuevo elemento y lo ponemos al principio de la cadena.
+    HTEntry* newEntry = createEntry(key, value);
+    if (newEntry) {
+        newEntry->next = ht->buckets[index];
+        ht->buckets[index] = newEntry;
+        ht->size++;
+    }
+}
+
+// funcion para obtener valores de la tabla hash
+void* htGet(HashTable* ht, const char* key) {
+    if (!ht || !key) return NULL;
+    
+    size_t index = hash(key) % ht->capacity;
+    HTEntry* entry = ht->buckets[index];
+    
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            return entry->value;
+        }
+        entry = entry->next;
+    }
+    
+    return NULL;
+}
+
+// funcion para eliminar un elemento de la tabla hash
+void htRemove(HashTable* ht, const char* key) {
+    if (!ht || !key) return;
+    
+    size_t index = hash(key) % ht->capacity;
+    HTEntry* entry = ht->buckets[index];
+    HTEntry* prev = NULL;
+    
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            if (prev) {
+                prev->next = entry->next;
+            } else {
+                ht->buckets[index] = entry->next;
+            }
+            
+            free(entry->key);
+            free(entry);
+            ht->size--;
+            return;
+        }
+        prev = entry;
+        entry = entry->next;
+    }
+}
+
+// funcion para destruir la tabla hash
+void destroyHashTable(HashTable* ht) {
+    if (!ht) return;
+    
+    for (size_t i = 0; i < ht->capacity; i++) {
+        HTEntry* entry = ht->buckets[i];
+        while (entry) {
+            HTEntry* next = entry->next;
+            free(entry->key);
+            free(entry);
+            entry = next;
+        }
+    }
+    
+    free(ht->buckets);
+    free(ht);
+}
+
+int htIsEmpty(HashTable* ht) {
+    return ht ? ht->size == 0 : 1;
+}
+
+size_t htSize(HashTable* ht) {
+    return ht ? ht->size : 0;
+}
