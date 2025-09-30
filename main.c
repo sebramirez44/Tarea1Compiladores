@@ -45,6 +45,10 @@ void destroyStack(Stack* s) {
     free(s);
 };
 
+int stackIsEmpty(Stack* s) {
+    return s->Top == NULL;
+};
+
 int main() {
     Queue* q = createQueue();
     int* num1 = malloc(sizeof(int));

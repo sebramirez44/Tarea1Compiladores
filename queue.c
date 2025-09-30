@@ -58,3 +58,7 @@ void destroyQueue(Queue* q) {
     }
     free(q);
 };
+
+int queueIsEmpty(Queue* q) {
+    return q->first == NULL;
+};
