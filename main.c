@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 typedef struct Node {
-    int data;
+    void* data;
     struct Node* next;
 } Node;
 
@@ -19,7 +19,7 @@ Queue* createQueue() {
     return q;
 }
 
-void enqueue(Queue* q, int data) {
+void enqueue(Queue* q, void* data) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     newNode->data = data;
     newNode->next = NULL;
@@ -43,6 +43,8 @@ void dequeue(Queue* q) {
         free(currentFront);
     } else {
         free(q->first);
+        q->first = NULL;
+        q->last = NULL;
     }
     
 };
@@ -53,9 +55,13 @@ typedef struct Stack {
 
 int main() {
     Queue* q = createQueue();
-    enqueue(q, 10);
-    enqueue(q, 20);
+    int* num1 = malloc(sizeof(int));
+    *num1 = 10;
+    int* num2 = malloc(sizeof(int));
+    *num2 = 20;
+    enqueue(q, num1);
+    enqueue(q, num2);
     dequeue(q);
-    printf("%d", q->first->data);
+    printf("%d", *(int*)q->first->data);
     return 0;
 };
